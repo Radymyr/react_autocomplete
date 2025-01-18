@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import './App.scss';
 import { Person } from './types/Person';
 import { peopleFromServer } from './data/people';
@@ -12,17 +12,10 @@ import { debounce } from './utils/debounce';
 import { text } from './shared/constants/text';
 
 export const App: React.FC = () => {
-  const { name, born, died } = peopleFromServer[0];
   const [people] = useState<Array<Person>>(peopleFromServer);
   const [value, setValue] = useState<string>('');
   const [query, setQuery] = useState('');
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
-
-  useEffect(() => {
-    if (value.trim() == '') {
-      setSelectedPerson(null);
-    }
-  }, [value, query]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getInputLag = useCallback(debounce(setQuery, 1000), []);
@@ -45,15 +38,12 @@ export const App: React.FC = () => {
 
   return (
     <ContainerComponent>
-      {selectedPerson ? (
-        <TitleComponent
-          name={name}
-          born={born}
-          died={died}
-          currentPerson={selectedPerson}
-        />
+      {value === selectedPerson?.name ? (
+        <TitleComponent currentPerson={selectedPerson} />
       ) : (
-        <NotificationComponent textMessage={text.noSelectedPerson} />
+        <h1 className="title" data-cy="title">
+          {text.noSelectedPerson}
+        </h1>
       )}
       <DropdownComponent
         setSelectedPerson={setSelectedPerson}
